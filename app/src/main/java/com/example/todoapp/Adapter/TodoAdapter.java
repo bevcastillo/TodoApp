@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoapp.Model.Datum;
@@ -32,6 +34,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_todo_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
 
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "I am clicked "+list.get(viewHolder.getAdapterPosition()).getId()+"is the ID of the todo and "+list.get(viewHolder.getAdapterPosition()).getUserId(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         return viewHolder;
     }
 
@@ -50,11 +59,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView tvTitle;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvTitle = (TextView) itemView.findViewById(R.id.tv_todo_title);
+            cardView = (CardView) itemView.findViewById(R.id.cardview_layout);
         }
     }
 

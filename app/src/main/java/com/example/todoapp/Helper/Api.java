@@ -27,6 +27,20 @@ public class Api {
         return call;
     }
 
+
+    public Call postWithAuth(String url, String token, String json, Callback callback){
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .addHeader("Authorization", "Bearer "+token)
+                .url(url)
+                .post(body) //(post) when sending request to server, (get) when retrieving data from server
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+        return call;
+    }
+
     public Call getWithAuthorization(String url, String token, Callback callback) {
         Request request = new Request.Builder()
                 .addHeader("Authorization", "Bearer "+token)

@@ -17,6 +17,10 @@ public class ApiResponse {
     @Expose
     private String token;
 
+    @SerializedName("id")
+    @Expose
+    private String id;
+
     public Boolean getSuccess() {
         return success;
     }
@@ -39,5 +43,13 @@ public class ApiResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             SharedPreferences.Editor editor = userTokenPref.edit();
 
                             editor.putString("user_token", apiResponse.getToken());
+                            editor.putString("user_id", apiResponse.getId());
                             editor.commit();
 
                             Intent intent = new Intent(MainActivity.this, HomeActivity.class);

@@ -1,5 +1,6 @@
 package com.example.todoapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +12,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -35,6 +39,7 @@ import static com.example.todoapp.Constant.TODO_API_URL;
 public class HomeActivity extends AppCompatActivity {
 
     RecyclerView rvAllTodo;
+    Button btnLogout;
 //    Todo todo;
 
     Gson gson;
@@ -44,9 +49,29 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         rvAllTodo = (RecyclerView) findViewById(R.id.rv_alltodo);
+        btnLogout = (Button) findViewById(R.id.btn_logout);
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences userTokenPref = getApplicationContext().getSharedPreferences("UserToken", MODE_PRIVATE);
+                SharedPreferences.Editor editor = userTokenPref.edit();
+
+                editor.remove("user_id");
+                editor.remove("user_token");
+                editor.clear();
+                editor.commit();
+
+                Toast.makeText(HomeActivity.this, "You have been logged out", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
+
     }
 
     @Override
@@ -55,9 +80,10 @@ public class HomeActivity extends AppCompatActivity {
 
         SharedPreferences userTokenPref = getApplicationContext().getSharedPreferences("UserToken", MODE_PRIVATE);
         String userToken = (userTokenPref.getString("user_token", ""));
+        String userId = (userTokenPref.getString("user_id", ""));
 
         Api api = new Api();
-        api.getWithAuthorization(TODO_API_URL, userToken, new Callback() {
+        api.getWithAuthorization(TODO_API_URL+"/"+userId, userToken, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
@@ -81,7 +107,6 @@ public class HomeActivity extends AppCompatActivity {
                             rvAllTodo.setAdapter(adapter);
                         }
                     });
-
                 } else {
                     Log.e("REQ", response.body().string());
                 }
@@ -93,7 +118,17 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_add:
+                Intent intent = new Intent(HomeActivity.this, AddTodoActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
